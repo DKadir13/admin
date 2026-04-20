@@ -28,10 +28,6 @@ if (!existsSync(uploadsDir)) mkdirSync(uploadsDir, { recursive: true })
 const app = express()
 const PORT = process.env.PORT || 3001
 
-// Reverse proxy (Nginx/Cloudflare) arkasında doğru client IP için.
-// Not: X-Forwarded-For header'ı güvenilir kaynaktan gelmeli (proxy).
-app.set('trust proxy', true)
-
 app.use(cors({ origin: true, credentials: true }))
 app.use(express.json())
 app.use('/uploads', express.static(uploadsDir))
