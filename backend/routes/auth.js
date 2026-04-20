@@ -1,14 +1,16 @@
 import { Router } from 'express'
 import { createToken, removeToken } from '../middleware/auth.js'
+import bcrypt from 'bcryptjs'
 
 const router = Router()
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123'
+// Admin şifresi düz metin tutulmaz; bcrypt hash ile doğrulanır.
+const ADMIN_PASSWORD_HASH =
+  process.env.ADMIN_PASSWORD_HASH || '$2a$10$lMnaMzb52SCFYbVE3WUxA.Ju24KAL.MO0hGLwCyxRTpTOl33Kc8pK'
 
 router.post('/login', async (req, res) => {
   const { password } = req.body || {}
-  if (password !== ADMIN_PASSWORD) {
-    return res.status(401).json({ success: false, error: 'Şifre hatalı.' })
-  }
+  const ok = await bcrypt.compare(String(password || ''), ADMIN_PASSWORD_HASH)
+  if (!ok) return res.status(401).json({ success: false, error: 'Şifre hatalı.' })
   try {
     const token = await createToken()
     res.json({ success: true, token })
