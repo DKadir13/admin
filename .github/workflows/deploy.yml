@@ -25,7 +25,7 @@ jobs:
             npm install
             # PM2 ile süreci restart et (Eğer daha önce start etmediysen hata verebilir, 
             # o yüzden önce sunucuda pm2 start index.js --name "admin-backend" yapmıştık, bu çalışacaktır)
-            pm2 restart admin-backend
+            pm2 restart admin-backend --update-env
             
             # Frontend Güncelleme
             cd ../frontend
