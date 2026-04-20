@@ -1,0 +1,33 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 85.235.74.60
+          username: root
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            cd /var/www/admin-panel
+            
+            # Kodları çek
+            git pull origin main
+            
+            # Backend Güncelleme
+            cd backend
+            npm install
+            # PM2 ile süreci restart et (Eğer daha önce start etmediysen hata verebilir, 
+            # o yüzden önce sunucuda pm2 start index.js --name "admin-backend" yapmıştık, bu çalışacaktır)
+            pm2 restart admin-backend
+            
+            # Frontend Güncelleme
+            cd ../frontend
+            npm install
+            npm run build
