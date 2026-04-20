@@ -2,11 +2,9 @@ function resolveApiBase() {
   const envBase = import.meta.env.VITE_API_BASE
   if (typeof envBase === 'string' && envBase.trim()) return envBase.trim().replace(/\/+$/, '')
 
-  // Env yoksa, hangi host'ta açıldıysa ona göre backend'i tahmin et.
-  // Prod: http://85.235.74.60:3001  | Local: http://127.0.0.1:3001
-  const host = window.location.hostname || 'localhost'
-  const protocol = window.location.protocol || 'http:'
-  return `${protocol}//${host}:3001`
+  // Env yoksa aynı origin kullan (Nginx üzerinden /api proxy varsayımı).
+  // Örn: panel http://85.235.74.60 üzerinden açıldıysa API_BASE de http://85.235.74.60 olur.
+  return window.location.origin
 }
 
 // Backend base URL (Vite env). Örn: http://85.235.74.60:3001
