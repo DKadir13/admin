@@ -1,3 +1,4 @@
+// Backend base URL (Vite env). Örn: http://85.235.74.60:3001
 const BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3001'
 const API = `${BASE}/api`
 
