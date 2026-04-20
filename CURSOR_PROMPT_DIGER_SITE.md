@@ -10,9 +10,9 @@ Bu projede **blog yazıları** ve **ürünler** verisini harici bir API'den çek
 
 ### API bilgileri
 - **Base URL (zorunlu):** Mutlaka **tam adres** kullan. Relative path (`/api/public/...`) kullanma, 404 alırsın.
-  - **Yerel (şu an kullanılan):** `http://localhost:3001` — admin backend aynı bilgisayarda çalışıyor olmalı.
-  - Canlı: `https://akygroupadminpanel.vercel.app`
-- **.env:** Yerelde `VITE_API_BASE=http://localhost:3001` ve `VITE_SITE_ID=atakentEczadeposu` (veya ilgili site id) tanımla.
+  - **Yerel:** `http://127.0.0.1:3001` — admin backend aynı bilgisayarda çalışıyor olmalı.
+  - **Canlı (sunucu):** `http://85.235.74.60` — Nginx `/api` isteklerini 3001’e yönlendirmeli.
+- **.env:** Örn `VITE_API_BASE=http://85.235.74.60` ve `VITE_SITE_ID=atakentEczadeposu` (veya ilgili site id) tanımla.
 - **Kimlik doğrulama:** Yok. Public endpoint'ler token istemez.
 - **Site ID:** Örnekler: `medicaGlobal`, `akyPharma`, `arthroline`, `medart`, `renova`, `atakentEczadeposu`
 
@@ -35,8 +35,8 @@ Bu projede **blog yazıları** ve **ürünler** verisini harici bir API'den çek
 
 ### Örnek kullanım (referans) — URL mutlaka tam (absolute) olsun
 ```javascript
-// Yerel: VITE_API_BASE=http://localhost:3001 (.env). Admin backend çalışıyor olmalı.
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3001'
+// Örn: VITE_API_BASE=http://85.235.74.60 (.env). Nginx /api proxy çalışıyor olmalı.
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://85.235.74.60'
 const SITE_ID = import.meta.env.VITE_SITE_ID || 'atakentEczadeposu'
 
 // Yanlış: fetch('/api/public/...') → 404 verir (istek kendi siteden gider)

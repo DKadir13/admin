@@ -3,36 +3,36 @@
     "id": "medicaGlobal",
     "name": "Medica Global",
     "logo": "/logolar/1.png",
-    "apiBaseUrl": "http://localhost:3001/api"
+    "apiBaseUrl": "/api"
   },
   {
     "id": "akyPharma",
     "name": "AKY Pharma",
     "logo": "/logolar/2.png",
-    "apiBaseUrl": "http://localhost:3001/api"
+    "apiBaseUrl": "/api"
   },
   {
     "id": "arthroline",
     "name": "ArthroLine",
     "logo": "/logolar/3.png",
-    "apiBaseUrl": "http://localhost:3001/api"
+    "apiBaseUrl": "/api"
   },
   {
     "id": "medart",
     "name": "Medart",
     "logo": "/logolar/4.png",
-    "apiBaseUrl": "http://localhost:3001/api"
+    "apiBaseUrl": "/api"
   },
   {
     "id": "renova",
     "name": "Renova",
     "logo": "/logolar/5.png",
-    "apiBaseUrl": "http://localhost:3001/api"
+    "apiBaseUrl": "/api"
   },
   {
     "id": "atakentEczadeposu",
     "name": "Atakent Eczadeposu",
     "logo": "/logolar/6.png",
-    "apiBaseUrl": "http://localhost:3001/api"
+    "apiBaseUrl": "/api"
   }
 ]

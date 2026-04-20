@@ -7,12 +7,12 @@ import { dedupeSites, removeMedartilacDuplicateSites } from './dedupeSites.js'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const defaultSites = [
-  { id: 'medicaGlobal', name: 'Medica Global', logo: '/logolar/1.png', apiBaseUrl: 'http://localhost:3001/api' },
-  { id: 'akyPharma', name: 'AKY Pharma', logo: '/logolar/2.png', apiBaseUrl: 'http://localhost:3001/api' },
-  { id: 'arthroline', name: 'ArthroLine', logo: '/logolar/3.png', apiBaseUrl: 'http://localhost:3001/api' },
-  { id: 'medart', name: 'Medart', logo: '/logolar/4.png', apiBaseUrl: 'http://localhost:3001/api' },
-  { id: 'renova', name: 'Renova', logo: '/logolar/5.png', apiBaseUrl: 'http://localhost:3001/api' },
-  { id: 'atakentEczadeposu', name: 'Atakent Eczadeposu', logo: '/logolar/6.png', apiBaseUrl: 'http://localhost:3001/api' },
+  { id: 'medicaGlobal', name: 'Medica Global', logo: '/logolar/1.png', apiBaseUrl: '/api' },
+  { id: 'akyPharma', name: 'AKY Pharma', logo: '/logolar/2.png', apiBaseUrl: '/api' },
+  { id: 'arthroline', name: 'ArthroLine', logo: '/logolar/3.png', apiBaseUrl: '/api' },
+  { id: 'medart', name: 'Medart', logo: '/logolar/4.png', apiBaseUrl: '/api' },
+  { id: 'renova', name: 'Renova', logo: '/logolar/5.png', apiBaseUrl: '/api' },
+  { id: 'atakentEczadeposu', name: 'Atakent Eczadeposu', logo: '/logolar/6.png', apiBaseUrl: '/api' },
 ]
 
 function loadSitesFromFile() {
@@ -49,10 +49,15 @@ export async function seedSites() {
     if (!id || !name) continue
 
     const incomingApiBaseUrl = typeof site.apiBaseUrl === 'string' ? site.apiBaseUrl.trim() : ''
-    const incomingLooksLocal = incomingApiBaseUrl.includes('localhost') || incomingApiBaseUrl.includes('127.0.0.1')
+    const incomingLooksLocal =
+      incomingApiBaseUrl.includes('localhost') || incomingApiBaseUrl.includes('127.0.0.1') || incomingApiBaseUrl.startsWith('/api')
     const existing = await Site.findOne({ id }).select('apiBaseUrl').lean()
     const existingApiBaseUrl = typeof existing?.apiBaseUrl === 'string' ? existing.apiBaseUrl.trim() : ''
-    const existingLooksRemote = !!existingApiBaseUrl && !existingApiBaseUrl.includes('localhost') && !existingApiBaseUrl.includes('127.0.0.1')
+    const existingLooksRemote =
+      !!existingApiBaseUrl &&
+      !existingApiBaseUrl.includes('localhost') &&
+      !existingApiBaseUrl.includes('127.0.0.1') &&
+      !existingApiBaseUrl.startsWith('/api')
 
     // Prod/Atlas ortamında, sites.json içindeki localhost değerleri yanlışlıkla remote değeri ezmesin.
     const apiBaseUrlToSet =
@@ -131,7 +136,7 @@ export async function seedSites() {
           $set: {
             name: titleCase(hintedCanonical) || hintedCanonical,
             logo: '',
-            apiBaseUrl: 'http://localhost:3001/api',
+          apiBaseUrl: '/api',
             blogEnabled: true,
           },
           $setOnInsert: { productFilters: [] },
@@ -151,7 +156,7 @@ export async function seedSites() {
         $set: {
           name: titleCase(folderId) || folderId,
           logo: '',
-          apiBaseUrl: 'http://localhost:3001/api',
+          apiBaseUrl: '/api',
           blogEnabled: true,
         },
         $setOnInsert: { productFilters: [] },

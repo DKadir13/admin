@@ -55,7 +55,7 @@ async function start() {
   await connectDB()
   await seedSites()
   app.listen(PORT, () => {
-    console.log(`Backend http://localhost:${PORT}`)
+    console.log(`Backend started on port ${PORT}`)
   })
 }
 

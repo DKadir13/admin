@@ -8,7 +8,7 @@ Tarayıcı isteği **senin siteden** (veya Vite’ın açtığı porttan) yapıy
   → İstek `https://senin-site.com/api/public/...` veya `http://localhost:5173/api/public/...` adresine gider. Bu adreste böyle bir route yok → **404**.
 
 - Doğru: İstek **admin backend’inin tam adresine** gitmeli:  
-  `http://localhost:3001/api/public/sites/atakentEczadeposu/blog` (yerel)
+  `http://127.0.0.1:3001/api/public/sites/atakentEczadeposu/blog` (yerel)
 
 ## Ne yapmalısın? (Diğer sitede)
 
@@ -17,7 +17,7 @@ Tarayıcı isteği **senin siteden** (veya Vite’ın açtığı porttan) yapıy
 **Yerelde (şu an kullan):** Diğer projenin kökünde `.env`, sondaki slash olmasın:
 
 ```env
-VITE_API_BASE=http://localhost:3001
+VITE_API_BASE=http://127.0.0.1:3001
 VITE_SITE_ID=atakentEczadeposu
 ```
 
@@ -41,14 +41,14 @@ const SITE_ID = import.meta.env.VITE_SITE_ID || 'atakentEczadeposu'
 const res = await fetch(`${API_BASE}/api/public/sites/${SITE_ID}/blog`)
 ```
 
-Yani URL her zaman **tam adres** olmalı: `http://localhost:3001/api/public/sites/atakentEczadeposu/blog` (yerel)
+Yani URL her zaman **tam adres** olmalı: `http://127.0.0.1:3001/api/public/sites/atakentEczadeposu/blog` (yerel)
 
 ### 3. Kontrol (yerel)
 
 Admin backend çalışıyorken tarayıcıda aç:
 
-- Blog: http://localhost:3001/api/public/sites/atakentEczadeposu/blog
-- Ürünler: http://localhost:3001/api/public/sites/atakentEczadeposu/products
+- Blog: http://127.0.0.1:3001/api/public/sites/atakentEczadeposu/blog
+- Ürünler: http://127.0.0.1:3001/api/public/sites/atakentEczadeposu/products
 
 JSON dönüyorsa backend çalışıyordur; sorun diğer sitedeki URL’in yanlış (relative) kullanılmasıdır.
 

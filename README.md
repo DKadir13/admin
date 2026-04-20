@@ -14,7 +14,7 @@
 
 ## Yerel kullanım: Eklediğin blog/ürün diğer sitede görünsün
 
-Her şeyi kendi bilgisayarında çalıştırıyorsan ve diğer site (örn. atakenteczadeposu) aynı veriyi gösterecekse → **LOCAL_KULLANIM.md** dosyasına bak. Özet: backend’i çalıştır, diğer sitede `VITE_API_BASE=http://localhost:3001` kullan, fetch’te tam URL at.
+Her şeyi kendi bilgisayarında çalıştırıyorsan ve diğer site (örn. atakenteczadeposu) aynı veriyi gösterecekse → **LOCAL_KULLANIM.md** dosyasına bak. Özet: backend’i çalıştır, diğer sitede `VITE_API_BASE=http://127.0.0.1:3001` kullan, fetch’te tam URL at.
 
 ## Çalıştırma
 
@@ -24,7 +24,7 @@ Her şeyi kendi bilgisayarında çalıştırıyorsan ve diğer site (örn. atake
    npm install
    npm run dev
    ```
-   Varsayılan: http://localhost:3001  
+   Varsayılan: http://127.0.0.1:3001  
    Veritabanı: `MONGODB_URI` (varsayılan: `mongodb://localhost:27017/admin-panel`). İlk çalıştırmada 6 site otomatik seedlenir.
 
 2. **Frontend**:
@@ -35,7 +35,7 @@ Her şeyi kendi bilgisayarında çalıştırıyorsan ve diğer site (örn. atake
    ```
    Varsayılan: http://localhost:5173
 
-3. Tarayıcıda frontend adresini açın. Giriş şifresi: **admin123** (backend `.env` içinde `ADMIN_PASSWORD` ile değiştirilebilir).
+3. Tarayıcıda frontend adresini açın.
 
 ## API Özeti
 
@@ -49,11 +49,11 @@ Veriler **MongoDB**’de tutulur (veritabanı: `admin-panel`, koleksiyonlar: `si
 
 ## Ortam değişkenleri (backend)
 
-`backend/.env` içinde:
+`backend/.env` içinde örnek:
 
 - `PORT=3001`
-- `ADMIN_PASSWORD=admin123`
-- `MONGODB_URI=mongodb://localhost:27017/admin-panel` (yerel MongoDB)
+- `MONGODB_URI=mongodb://localhost:27017`
+- `DB_NAME=admin_db`
 
 ## Firma adlarını (site adlarını) düzenleme
 
@@ -70,6 +70,6 @@ Eğer hâlâ "Firma 1", "Firma 2" görüyorsanız: veritabanındaki site **id**'
 1. **Logo dosyasını** `frontend/public/logolar/` klasörüne ekleyin (örn. `7.png`).
 2. MongoDB’de `sites` koleksiyonuna yeni belge ekleyin (mongosh veya Compass ile):
    ```json
-   { "id": "firma7", "name": "Firma 7", "logo": "/logolar/7.png", "apiBaseUrl": "http://localhost:3001/api" }
+   { "id": "firma7", "name": "Firma 7", "logo": "/logolar/7.png", "apiBaseUrl": "/api" }
    ```
    İsterseniz ileride backend’e “site ekle” API’si de eklenebilir.

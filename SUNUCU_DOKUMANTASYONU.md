@@ -54,15 +54,15 @@ Bu doküman, bu repodaki admin panelini bir Linux sunucuda çalıştırmak için
   - Tüm API istekleri burada toplanır.
   - **`API_BASE`** tek yerden çözülür:
     - Öncelik: `import.meta.env.VITE_API_BASE`
-    - Env yoksa: sayfanın açıldığı host’a göre `http(s)://<hostname>:3001` varsayar
-  - Bu sayede Network “Request URL” kısmında `localhost:3001`’e düşme ihtimali azaltılır.
+    - Env yoksa: **aynı origin** kullanır (örn. `http://85.235.74.60`)
+  - Bu sayede API çağrıları Nginx üzerinden `/api/*` ile akar.
 
 - **`frontend/src/screens/*`**
   - Yönetim ekranları (BlogPage, ProductsPage, DomainsPage, DashboardPage, LoginPage, vb.).
 
 - **`frontend/.env.example`**
   - Frontend’in backend’e bağlanacağı adres örneği:
-    - `VITE_API_BASE=http://85.235.74.60:3001`
+    - `VITE_API_BASE=http://85.235.74.60`
 
 ## Ortam değişkenleri (ENV)
 
@@ -85,7 +85,7 @@ Notlar:
 - Vite env:
 
 ```env
-VITE_API_BASE=http://85.235.74.60:3001
+VITE_API_BASE=http://85.235.74.60
 ```
 
 ## Sunucuda kurulum (PM2 ile)
@@ -167,7 +167,7 @@ Eğer domain üzerinden `/api`’yi 3001’e yönlendirmek istiyorsan tipik yakl
 
 ```nginx
 location /api/ {
-  proxy_pass http://127.0.0.1:3001/api/;
+  proxy_pass http://127.0.0.1:3001;
   proxy_set_header Host $host;
   proxy_set_header X-Real-IP $remote_addr;
   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -204,6 +204,6 @@ pm2 logs admin-backend --lines 200
 
 ### 2) Frontend “Request URL” localhost görünüyor
 - Frontend env’i doğru set et:
-  - `VITE_API_BASE=http://85.235.74.60:3001`
-- Eğer env yoksa, frontend host’a göre `:3001` varsayar; bu yüzden paneli hangi host’ta açıyorsan backend’in de o host’ta 3001’de erişilebilir olması gerekir.
+  - `VITE_API_BASE=http://85.235.74.60`
+- Eğer env yoksa, frontend zaten **aynı origin**’i kullanır (Nginx `/api` proxy gerekir).
 
