@@ -1,9 +1,8 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { getEvents, createEvent, updateEvent, deleteEvent, uploadImage } from '../api/client'
+import { API_BASE, getEvents, createEvent, updateEvent, deleteEvent, uploadImage } from '../api/client'
 import { useToast } from '../context/ToastContext'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3001'
 const imageSrc = (path) => (!path ? '' : path.startsWith('http') ? path : `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`)
 
 const emptyForm = {

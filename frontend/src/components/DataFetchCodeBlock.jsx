@@ -1,6 +1,5 @@
 import { useState } from 'react'
-
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3001'
+import { API_BASE } from '../api/client'
 
 const REACT_CODE = (apiBase, siteId) => `// Bu sitedeki blog ve ürün verilerini React ile çekmek için
 

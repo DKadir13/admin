@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { getSites, getStats, getBlog, getProducts, getDomains, getActivity, exportProducts, exportBlog, getAnnouncements, getQuickLinks, logout as apiLogout } from '../api/client'
+import { API_BASE, getSites, getStats, getBlog, getProducts, getDomains, getActivity, exportProducts, exportBlog, getAnnouncements, getQuickLinks, logout as apiLogout } from '../api/client'
 import { logoUrl } from '../utils/logoUrl'
 import MainLogo from '../components/MainLogo'
 import ThemeToggle from '../components/ThemeToggle'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3001'
 const imageSrc = (path) => (!path ? '' : path.startsWith('http') ? path : `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`)
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000

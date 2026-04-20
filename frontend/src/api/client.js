@@ -1,6 +1,17 @@
+function resolveApiBase() {
+  const envBase = import.meta.env.VITE_API_BASE
+  if (typeof envBase === 'string' && envBase.trim()) return envBase.trim().replace(/\/+$/, '')
+
+  // Env yoksa, hangi host'ta açıldıysa ona göre backend'i tahmin et.
+  // Prod: http://85.235.74.60:3001  | Local: http://127.0.0.1:3001
+  const host = window.location.hostname || 'localhost'
+  const protocol = window.location.protocol || 'http:'
+  return `${protocol}//${host}:3001`
+}
+
 // Backend base URL (Vite env). Örn: http://85.235.74.60:3001
-const BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3001'
-const API = `${BASE}/api`
+export const API_BASE = resolveApiBase()
+const API = `${API_BASE}/api`
 
 function getAuthHeader() {
   const token = window.localStorage.getItem('admin_token')

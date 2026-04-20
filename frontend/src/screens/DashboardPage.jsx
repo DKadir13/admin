@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { getBlog, getProducts } from '../api/client'
+import { API_BASE, getBlog, getProducts } from '../api/client'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3001'
 const imageSrc = (path) => (!path ? '' : path.startsWith('http') ? path : `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`)
 
 export default function DashboardPage() {
