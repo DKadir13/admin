@@ -14,42 +14,24 @@ export const API_BASE = resolveApiBase()
 const API = `${API_BASE}/api`
 
 function getAuthHeader() {
-  const token = window.localStorage.getItem('admin_token')
-  return token ? { Authorization: `Bearer ${token}` } : {}
+  return {}
 }
 
 /** 401 alındığında oturumu temizleyip giriş sayfasına yönlendirir */
 function handle401(res) {
   if (res.status === 401) {
-    window.localStorage.removeItem('admin_token')
-    window.localStorage.removeItem('admin_auth')
-    const base = (import.meta.env.BASE_URL || '/').replace(/\/+$/, '')
-    window.location.href = `${base}/login`.replace(/\/+/g, '/')
-    throw new Error('Oturum sonlandı. Lütfen tekrar giriş yapın.')
+    throw new Error('Yetkisiz erişim.')
   }
 }
 
 export async function login(password) {
-  const res = await fetch(`${API}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password }),
-  })
-  const data = await res.json().catch(() => ({}))
-  if (!res.ok) throw new Error(data.error || 'Giriş başarısız.')
-  return data
+  throw new Error('Login devre dışı.')
 }
 
 export async function logout() {
-  const token = window.localStorage.getItem('admin_token')
-  if (token) {
-    try {
-      await fetch(`${API}/auth/logout`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      })
-    } catch (_) {}
-  }
+  try {
+    await fetch(`${API}/auth/logout`, { method: 'POST' })
+  } catch (_) {}
 }
 
 export async function uploadImage(file) {

@@ -17,15 +17,7 @@ export async function removeToken(token) {
 }
 
 export function authMiddleware(req, res, next) {
-  const auth = req.headers.authorization
-  const token = auth && auth.startsWith('Bearer ') ? auth.slice(7) : null
-  isValidToken(token)
-    .then((valid) => {
-      if (!valid) {
-        return res.status(401).json({ error: 'Yetkisiz erişim.' })
-      }
-      req.token = token
-      next()
-    })
-    .catch(() => res.status(401).json({ error: 'Yetkisiz erişim.' }))
+  // Auth tamamen kaldırıldı: panel public çalışır.
+  // İleride tekrar açmak istersen eski token kontrolünü geri ekleyebilirsin.
+  next()
 }

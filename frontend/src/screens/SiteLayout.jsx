@@ -23,9 +23,7 @@ export default function SiteLayout() {
 
   const handleLogout = async () => {
     await apiLogout()
-    window.localStorage.removeItem('admin_token')
-    window.localStorage.removeItem('admin_auth')
-    navigate('/login')
+    navigate('/dashboard')
   }
 
   if (loading) return <div className="site-content">Yükleniyor…</div>

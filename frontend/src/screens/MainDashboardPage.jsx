@@ -130,9 +130,7 @@ export default function MainDashboardPage() {
 
   const handleLogout = async () => {
     await apiLogout()
-    window.localStorage.removeItem('admin_token')
-    window.localStorage.removeItem('admin_auth')
-    navigate('/login')
+    navigate('/dashboard')
   }
 
   const published = posts.filter((p) => p.status === 'yayında')
