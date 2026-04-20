@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "name": "Ürün 1",
+    "slug": "urun-1",
+    "price": "100 ₺",
+    "description": "",
+    "status": "aktif",
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "name": "Ürün 2",
+    "slug": "urun-2",
+    "price": "250 ₺",
+    "description": "",
+    "status": "pasif",
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-01T00:00:00.000Z"
+  }
+]

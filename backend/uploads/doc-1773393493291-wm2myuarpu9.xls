@@ -1,0 +1,17 @@
+﻿<div>
+	<table cellspacing="0" rules="all" border="1" style="border-collapse:collapse;">
+		<tr style="background-color:#FFFFFF;">
+			<th scope="col" style="background-color:green;">#</th><th scope="col" style="background-color:green;">Domain No</th><th scope="col" style="background-color:green;">Domain Adı</th><th scope="col" style="background-color:green;">Bitiş Tarihi</th><th scope="col" style="background-color:green;">IslemDurumu</th><th scope="col" style="background-color:green;">DomainDurumu</th><th scope="col" style="background-color:green;">Grup</th>
+		</tr><tr class="textmode" style="background-color:White;">
+			<td>1</td><td>5066021</td><td>hyadyn.com.tr</td><td>11.03.2025 23:00:00</td><td>Islem Yok</td><td>Domain Aktif</td><td>&nbsp;</td>
+		</tr><tr class="textmode" style="background-color:White;">
+			<td style="background-color:#C2D69B;">2</td><td style="background-color:#C2D69B;">5066019</td><td style="background-color:#C2D69B;">hyadyn.com</td><td style="background-color:#C2D69B;">13.03.2025 10:51:25</td><td style="background-color:#C2D69B;">Islem Yok</td><td style="background-color:#C2D69B;">Domain Aktif</td><td style="background-color:#C2D69B;">&nbsp;</td>
+		</tr><tr class="textmode" style="background-color:White;">
+			<td>3</td><td>3635955</td><td>medartilac.com</td><td>13.07.2025 20:03:31</td><td>Islem Yok</td><td>Domain Aktif</td><td>&nbsp;</td>
+		</tr><tr class="textmode" style="background-color:White;">
+			<td style="background-color:#C2D69B;">4</td><td style="background-color:#C2D69B;">3635954</td><td style="background-color:#C2D69B;">akypharma.com</td><td style="background-color:#C2D69B;">13.07.2025 20:03:22</td><td style="background-color:#C2D69B;">Islem Yok</td><td style="background-color:#C2D69B;">Domain Aktif</td><td style="background-color:#C2D69B;">&nbsp;</td>
+		</tr><tr class="textmode" style="background-color:White;">
+			<td>5</td><td>1547846</td><td>medicaglobal.com</td><td>12.03.2025 16:34:52</td><td>Islem Yok</td><td>Domain Aktif</td><td>&nbsp;</td>
+		</tr>
+	</table>
+</div>

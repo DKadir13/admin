@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "title": "Örnek Blog Yazısı 1",
+    "slug": "ornek-blog-yazisi-1",
+    "content": "",
+    "status": "yayında",
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "title": "Örnek Blog Yazısı 2",
+    "slug": "ornek-blog-yazisi-2",
+    "content": "",
+    "status": "taslak",
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-01T00:00:00.000Z"
+  }
+]
