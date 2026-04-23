@@ -1,9 +1,13 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { API_BASE, getProducts, getSite, updateSite, createProduct, updateProduct, deleteProduct, uploadImage, uploadDocument, getStats } from '../api/client'
+import { getProducts, getSite, updateSite, createProduct, updateProduct, deleteProduct, uploadImage, uploadDocument, getStats } from '../api/client'
 import { useToast } from '../context/ToastContext'
 
-const imageSrc = (path) => (!path ? '' : path.startsWith('http') ? path : `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`)
+const imageSrc = (path) => {
+  if (!path) return ''
+  if (String(path).startsWith('http')) return path
+  return String(path).startsWith('/') ? String(path) : `/${path}`
+}
 
 const slugFromLabel = (label) =>
   (label || '')
@@ -509,7 +513,7 @@ export default function ProductsPage() {
                       }
                       className="product-attachment-name"
                     />
-                    <a href={att.url.startsWith('http') ? att.url : `${API_BASE}${att.url.startsWith('/') ? '' : '/'}${att.url}`} target="_blank" rel="noopener noreferrer" className="product-attachment-link">
+                    <a href={att.url.startsWith('http') ? att.url : (att.url.startsWith('/') ? att.url : `/${att.url}`)} target="_blank" rel="noopener noreferrer" className="product-attachment-link">
                       Dosya
                     </a>
                     <button

@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { API_BASE, getSites, getStats, getBlog, getProducts, getDomains, getActivity, exportProducts, exportBlog, getAnnouncements, getQuickLinks, logout as apiLogout } from '../api/client'
+import { getSites, getStats, getBlog, getProducts, getDomains, getActivity, exportProducts, exportBlog, getAnnouncements, getQuickLinks, logout as apiLogout } from '../api/client'
 import { logoUrl } from '../utils/logoUrl'
 import MainLogo from '../components/MainLogo'
 import ThemeToggle from '../components/ThemeToggle'
 
-const imageSrc = (path) => (!path ? '' : path.startsWith('http') ? path : `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`)
+const imageSrc = (path) => {
+  if (!path) return ''
+  if (String(path).startsWith('http')) return path
+  return String(path).startsWith('/') ? String(path) : `/${path}`
+}
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000
 

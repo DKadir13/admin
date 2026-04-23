@@ -1,9 +1,13 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { API_BASE, getEvents, createEvent, updateEvent, deleteEvent, uploadImage } from '../api/client'
+import { getEvents, createEvent, updateEvent, deleteEvent, uploadImage } from '../api/client'
 import { useToast } from '../context/ToastContext'
 
-const imageSrc = (path) => (!path ? '' : path.startsWith('http') ? path : `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`)
+const imageSrc = (path) => {
+  if (!path) return ''
+  if (String(path).startsWith('http')) return path
+  return String(path).startsWith('/') ? String(path) : `/${path}`
+}
 
 const emptyForm = {
   title: '',

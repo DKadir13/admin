@@ -1,15 +1,28 @@
-function resolveApiBase() {
-  const envBase = import.meta.env.VITE_API_BASE
-  if (typeof envBase === 'string' && envBase.trim()) return envBase.trim().replace(/\/+$/, '')
-
-  // Env yoksa aynı origin kullan (Nginx üzerinden /api proxy varsayımı).
-  // Örn: panel http://85.235.74.60 üzerinden açıldıysa API_BASE de http://85.235.74.60 olur.
-  return window.location.origin
+function normalizeBaseUrl(base) {
+  const b = String(base || '').trim()
+  if (!b) return '/api'
+  // Tam URL verilmesini özellikle istemiyoruz; Nginx mimarisinde relative /api kullanılmalı.
+  if (/^https?:\/\//i.test(b)) return '/api'
+  const withLeadingSlash = b.startsWith('/') ? b : `/${b}`
+  return withLeadingSlash.replace(/\/+$/, '') || '/api'
 }
 
-// Backend base URL (Vite env). Örn: http://85.235.74.60:3001
-export const API_BASE = resolveApiBase()
-const API = `${API_BASE}/api`
+function joinBase(base, path) {
+  const b = normalizeBaseUrl(base)
+  const p = String(path || '')
+  if (!p) return b
+
+  // Eğer path zaten /api ile başlıyorsa (ve base de /api ise) çiftlemeyi engelle.
+  if (b === '/api' && (p === '/api' || p.startsWith('/api/'))) return p
+  // Eğer path zaten base ile başlıyorsa, tekrar ekleme.
+  if (p === b || p.startsWith(`${b}/`)) return p
+
+  if (p.startsWith('/')) return `${b}${p}`
+  return `${b}/${p}`
+}
+
+export const API_BASE_URL = normalizeBaseUrl(import.meta.env.VITE_API_BASE_URL)
+const API = (path) => joinBase(API_BASE_URL, path)
 
 function getAuthHeader() {
   return {}
@@ -28,14 +41,14 @@ export async function login(password) {
 
 export async function logout() {
   try {
-    await fetch(`${API}/auth/logout`, { method: 'POST' })
+    await fetch(API('/auth/logout'), { method: 'POST' })
   } catch (_) {}
 }
 
 export async function uploadImage(file) {
   const formData = new FormData()
   formData.append('file', file)
-  const res = await fetch(`${API}/upload`, {
+  const res = await fetch(API('/upload'), {
     method: 'POST',
     headers: getAuthHeader(),
     body: formData,
@@ -50,7 +63,7 @@ export async function uploadImage(file) {
 export async function uploadDocument(file) {
   const formData = new FormData()
   formData.append('file', file)
-  const res = await fetch(`${API}/upload/document`, {
+  const res = await fetch(API('/upload/document'), {
     method: 'POST',
     headers: getAuthHeader(),
     body: formData,
@@ -62,7 +75,7 @@ export async function uploadDocument(file) {
 }
 
 export async function getSites() {
-  const res = await fetch(`${API}/sites`, { headers: getAuthHeader() })
+  const res = await fetch(API('/sites'), { headers: getAuthHeader() })
   handle401(res)
   const data = await res.json().catch(() => [])
   if (!res.ok) throw new Error(Array.isArray(data) ? 'Siteler yüklenemedi.' : (data.error || 'Hata'))
@@ -71,7 +84,7 @@ export async function getSites() {
 
 /** Tüm panel istatistikleri (site sayısı, ürün/blog/domain toplamları, yüklenen MB, site bazlı dağılım) */
 export async function getStats() {
-  const res = await fetch(`${API}/stats`, { headers: getAuthHeader() })
+  const res = await fetch(API('/stats'), { headers: getAuthHeader() })
   handle401(res)
   const data = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error(data.error || 'İstatistikler alınamadı.')
@@ -80,7 +93,7 @@ export async function getStats() {
 
 /** Son işlemler (ürün/blog ekleme, güncelleme, silme) */
 export async function getActivity() {
-  const res = await fetch(`${API}/activity`, { headers: getAuthHeader() })
+  const res = await fetch(API('/activity'), { headers: getAuthHeader() })
   handle401(res)
   const data = await res.json().catch(() => [])
   if (!res.ok) throw new Error(Array.isArray(data) ? 'Aktivite alınamadı.' : (data.error || 'Hata'))
@@ -89,7 +102,7 @@ export async function getActivity() {
 
 /** Ürün listesini JSON olarak indir */
 export async function exportProducts(siteId) {
-  const res = await fetch(`${API}/export/products?siteId=${encodeURIComponent(siteId)}`, { headers: getAuthHeader() })
+  const res = await fetch(API(`/export/products?siteId=${encodeURIComponent(siteId)}`), { headers: getAuthHeader() })
   handle401(res)
   if (!res.ok) {
     const data = await res.json().catch(() => ({}))
@@ -100,7 +113,7 @@ export async function exportProducts(siteId) {
 
 /** Blog yazılarını JSON olarak indir */
 export async function exportBlog(siteId) {
-  const res = await fetch(`${API}/export/blog?siteId=${encodeURIComponent(siteId)}`, { headers: getAuthHeader() })
+  const res = await fetch(API(`/export/blog?siteId=${encodeURIComponent(siteId)}`), { headers: getAuthHeader() })
   handle401(res)
   if (!res.ok) {
     const data = await res.json().catch(() => ({}))
@@ -112,7 +125,7 @@ export async function exportBlog(siteId) {
 /** Şirket içi duyurular */
 export async function getAnnouncements(siteId) {
   const q = siteId ? `?siteId=${encodeURIComponent(siteId)}` : ''
-  const res = await fetch(`${API}/announcements${q}`, { headers: getAuthHeader() })
+  const res = await fetch(API(`/announcements${q}`), { headers: getAuthHeader() })
   handle401(res)
   const data = await res.json().catch(() => [])
   if (!res.ok) throw new Error(Array.isArray(data) ? 'Duyurular alınamadı.' : (data.error || 'Hata'))
@@ -120,7 +133,7 @@ export async function getAnnouncements(siteId) {
 }
 
 export async function createAnnouncement(body) {
-  const res = await fetch(`${API}/announcements`, {
+  const res = await fetch(API('/announcements'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
     body: JSON.stringify(body),
@@ -132,7 +145,7 @@ export async function createAnnouncement(body) {
 }
 
 export async function updateAnnouncement(id, body) {
-  const res = await fetch(`${API}/announcements/${id}`, {
+  const res = await fetch(API(`/announcements/${id}`), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
     body: JSON.stringify(body),
@@ -144,7 +157,7 @@ export async function updateAnnouncement(id, body) {
 }
 
 export async function deleteAnnouncement(id) {
-  const res = await fetch(`${API}/announcements/${id}`, { method: 'DELETE', headers: getAuthHeader() })
+  const res = await fetch(API(`/announcements/${id}`), { method: 'DELETE', headers: getAuthHeader() })
   handle401(res)
   if (!res.ok) {
     const data = await res.json().catch(() => ({}))
@@ -155,7 +168,7 @@ export async function deleteAnnouncement(id) {
 
 /** Şirket içi hızlı linkler */
 export async function getQuickLinks() {
-  const res = await fetch(`${API}/quick-links`, { headers: getAuthHeader() })
+  const res = await fetch(API('/quick-links'), { headers: getAuthHeader() })
   handle401(res)
   const data = await res.json().catch(() => [])
   if (!res.ok) throw new Error(Array.isArray(data) ? 'Linkler alınamadı.' : (data.error || 'Hata'))
@@ -163,7 +176,7 @@ export async function getQuickLinks() {
 }
 
 export async function createQuickLink(body) {
-  const res = await fetch(`${API}/quick-links`, {
+  const res = await fetch(API('/quick-links'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
     body: JSON.stringify(body),
@@ -175,7 +188,7 @@ export async function createQuickLink(body) {
 }
 
 export async function updateQuickLink(id, body) {
-  const res = await fetch(`${API}/quick-links/${id}`, {
+  const res = await fetch(API(`/quick-links/${id}`), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
     body: JSON.stringify(body),
@@ -187,7 +200,7 @@ export async function updateQuickLink(id, body) {
 }
 
 export async function deleteQuickLink(id) {
-  const res = await fetch(`${API}/quick-links/${id}`, { method: 'DELETE', headers: getAuthHeader() })
+  const res = await fetch(API(`/quick-links/${id}`), { method: 'DELETE', headers: getAuthHeader() })
   handle401(res)
   if (!res.ok) {
     const data = await res.json().catch(() => ({}))
@@ -199,7 +212,7 @@ export async function deleteQuickLink(id) {
 /** Şirket içi notlar (siteId boş = genel notlar) */
 export async function getNotes(siteId) {
   const q = siteId !== undefined && siteId !== null ? `?siteId=${encodeURIComponent(siteId)}` : ''
-  const res = await fetch(`${API}/notes${q}`, { headers: getAuthHeader() })
+  const res = await fetch(API(`/notes${q}`), { headers: getAuthHeader() })
   handle401(res)
   const data = await res.json().catch(() => [])
   if (!res.ok) throw new Error(Array.isArray(data) ? 'Notlar alınamadı.' : (data.error || 'Hata'))
@@ -207,7 +220,7 @@ export async function getNotes(siteId) {
 }
 
 export async function createNote(body) {
-  const res = await fetch(`${API}/notes`, {
+  const res = await fetch(API('/notes'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
     body: JSON.stringify(body),
@@ -219,7 +232,7 @@ export async function createNote(body) {
 }
 
 export async function updateNote(id, body) {
-  const res = await fetch(`${API}/notes/${id}`, {
+  const res = await fetch(API(`/notes/${id}`), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
     body: JSON.stringify(body),
@@ -231,7 +244,7 @@ export async function updateNote(id, body) {
 }
 
 export async function deleteNote(id) {
-  const res = await fetch(`${API}/notes/${id}`, { method: 'DELETE', headers: getAuthHeader() })
+  const res = await fetch(API(`/notes/${id}`), { method: 'DELETE', headers: getAuthHeader() })
   handle401(res)
   if (!res.ok) {
     const data = await res.json().catch(() => ({}))
@@ -241,7 +254,7 @@ export async function deleteNote(id) {
 }
 
 export async function getSite(siteId) {
-  const res = await fetch(`${API}/sites/${siteId}`, { headers: getAuthHeader() })
+  const res = await fetch(API(`/sites/${siteId}`), { headers: getAuthHeader() })
   handle401(res)
   const data = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error(data.error || 'Site alınamadı.')
@@ -249,7 +262,7 @@ export async function getSite(siteId) {
 }
 
 export async function updateSite(siteId, body) {
-  const res = await fetch(`${API}/sites/${siteId}`, {
+  const res = await fetch(API(`/sites/${siteId}`), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
     body: JSON.stringify(body),
@@ -261,7 +274,7 @@ export async function updateSite(siteId, body) {
 }
 
 export async function getBlog(siteId) {
-  const res = await fetch(`${API}/sites/${siteId}/blog`, { headers: getAuthHeader() })
+  const res = await fetch(API(`/sites/${siteId}/blog`), { headers: getAuthHeader() })
   handle401(res)
   const data = await res.json().catch(() => [])
   if (!res.ok) throw new Error(Array.isArray(data) ? 'Yazılar yüklenemedi.' : (data.error || 'Hata'))
@@ -269,7 +282,7 @@ export async function getBlog(siteId) {
 }
 
 export async function createBlogPost(siteId, body) {
-  const res = await fetch(`${API}/sites/${siteId}/blog`, {
+  const res = await fetch(API(`/sites/${siteId}/blog`), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
     body: JSON.stringify(body),
@@ -281,7 +294,7 @@ export async function createBlogPost(siteId, body) {
 }
 
 export async function updateBlogPost(siteId, id, body) {
-  const res = await fetch(`${API}/sites/${siteId}/blog/${id}`, {
+  const res = await fetch(API(`/sites/${siteId}/blog/${id}`), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
     body: JSON.stringify(body),
@@ -293,7 +306,7 @@ export async function updateBlogPost(siteId, id, body) {
 }
 
 export async function deleteBlogPost(siteId, id) {
-  const res = await fetch(`${API}/sites/${siteId}/blog/${id}`, {
+  const res = await fetch(API(`/sites/${siteId}/blog/${id}`), {
     method: 'DELETE',
     headers: getAuthHeader(),
   })
@@ -306,7 +319,7 @@ export async function deleteBlogPost(siteId, id) {
 }
 
 export async function getEvents(siteId) {
-  const res = await fetch(`${API}/sites/${siteId}/events`, { headers: getAuthHeader() })
+  const res = await fetch(API(`/sites/${siteId}/events`), { headers: getAuthHeader() })
   handle401(res)
   const data = await res.json().catch(() => [])
   if (!res.ok) throw new Error(Array.isArray(data) ? 'Etkinlikler yüklenemedi.' : (data.error || 'Hata'))
@@ -314,7 +327,7 @@ export async function getEvents(siteId) {
 }
 
 export async function createEvent(siteId, body) {
-  const res = await fetch(`${API}/sites/${siteId}/events`, {
+  const res = await fetch(API(`/sites/${siteId}/events`), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
     body: JSON.stringify(body),
@@ -326,7 +339,7 @@ export async function createEvent(siteId, body) {
 }
 
 export async function updateEvent(siteId, id, body) {
-  const res = await fetch(`${API}/sites/${siteId}/events/${id}`, {
+  const res = await fetch(API(`/sites/${siteId}/events/${id}`), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
     body: JSON.stringify(body),
@@ -338,7 +351,7 @@ export async function updateEvent(siteId, id, body) {
 }
 
 export async function deleteEvent(siteId, id) {
-  const res = await fetch(`${API}/sites/${siteId}/events/${id}`, {
+  const res = await fetch(API(`/sites/${siteId}/events/${id}`), {
     method: 'DELETE',
     headers: getAuthHeader(),
   })
@@ -351,7 +364,7 @@ export async function deleteEvent(siteId, id) {
 }
 
 export async function getProducts(siteId) {
-  const res = await fetch(`${API}/sites/${siteId}/products`, { headers: getAuthHeader() })
+  const res = await fetch(API(`/sites/${siteId}/products`), { headers: getAuthHeader() })
   handle401(res)
   const data = await res.json().catch(() => [])
   if (!res.ok) throw new Error(Array.isArray(data) ? 'Ürünler yüklenemedi.' : (data.error || 'Hata'))
@@ -359,7 +372,7 @@ export async function getProducts(siteId) {
 }
 
 export async function createProduct(siteId, body) {
-  const res = await fetch(`${API}/sites/${siteId}/products`, {
+  const res = await fetch(API(`/sites/${siteId}/products`), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
     body: JSON.stringify(body),
@@ -371,7 +384,7 @@ export async function createProduct(siteId, body) {
 }
 
 export async function updateProduct(siteId, id, body) {
-  const res = await fetch(`${API}/sites/${siteId}/products/${id}`, {
+  const res = await fetch(API(`/sites/${siteId}/products/${id}`), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
     body: JSON.stringify(body),
@@ -383,7 +396,7 @@ export async function updateProduct(siteId, id, body) {
 }
 
 export async function deleteProduct(siteId, id) {
-  const res = await fetch(`${API}/sites/${siteId}/products/${id}`, {
+  const res = await fetch(API(`/sites/${siteId}/products/${id}`), {
     method: 'DELETE',
     headers: getAuthHeader(),
   })
@@ -396,7 +409,7 @@ export async function deleteProduct(siteId, id) {
 }
 
 export async function getDomains() {
-  const res = await fetch(`${API}/domains`, { headers: getAuthHeader() })
+  const res = await fetch(API('/domains'), { headers: getAuthHeader() })
   handle401(res)
   const data = await res.json().catch(() => [])
   if (!res.ok) throw new Error(Array.isArray(data) ? 'Alan adları yüklenemedi.' : (data.error || 'Hata'))
@@ -404,7 +417,7 @@ export async function getDomains() {
 }
 
 export async function createDomain(body) {
-  const res = await fetch(`${API}/domains`, {
+  const res = await fetch(API('/domains'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
     body: JSON.stringify(body),
@@ -416,7 +429,7 @@ export async function createDomain(body) {
 }
 
 export async function updateDomain(id, body) {
-  const res = await fetch(`${API}/domains/${id}`, {
+  const res = await fetch(API(`/domains/${id}`), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
     body: JSON.stringify(body),
@@ -428,7 +441,7 @@ export async function updateDomain(id, body) {
 }
 
 export async function deleteDomain(id) {
-  const res = await fetch(`${API}/domains/${id}`, {
+  const res = await fetch(API(`/domains/${id}`), {
     method: 'DELETE',
     headers: getAuthHeader(),
   })

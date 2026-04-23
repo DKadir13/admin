@@ -8,7 +8,7 @@ Tarayıcı isteği **senin siteden** (veya Vite’ın açtığı porttan) yapıy
   → İstek `https://senin-site.com/api/public/...` veya `http://localhost:5173/api/public/...` adresine gider. Bu adreste böyle bir route yok → **404**.
 
 - Doğru: İstek **admin backend’inin tam adresine** gitmeli:  
-  `http://127.0.0.1:3001/api/public/sites/atakentEczadeposu/blog` (yerel)
+  `/api/public/sites/atakentEczadeposu/blog` (yerel, Nginx/proxy ile)
 
 ## Ne yapmalısın? (Diğer sitede)
 
@@ -17,7 +17,7 @@ Tarayıcı isteği **senin siteden** (veya Vite’ın açtığı porttan) yapıy
 **Yerelde (şu an kullan):** Diğer projenin kökünde `.env`, sondaki slash olmasın:
 
 ```env
-VITE_API_BASE=http://127.0.0.1:3001
+VITE_API_BASE_URL=/api
 VITE_SITE_ID=atakentEczadeposu
 ```
 
@@ -32,8 +32,7 @@ fetch('/api/public/sites/atakentEczadeposu/blog')
 
 **Doğru:**
 ```javascript
-const API_BASE = import.meta.env.VITE_API_BASE
-if (!API_BASE) throw new Error('VITE_API_BASE tanımlı değil')
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
 
 const res = await fetch(`${API_BASE}/api/public/sites/atakentEczadeposu/blog`)
 // veya
@@ -41,17 +40,17 @@ const SITE_ID = import.meta.env.VITE_SITE_ID || 'atakentEczadeposu'
 const res = await fetch(`${API_BASE}/api/public/sites/${SITE_ID}/blog`)
 ```
 
-Yani URL her zaman **tam adres** olmalı: `http://127.0.0.1:3001/api/public/sites/atakentEczadeposu/blog` (yerel)
+Yani URL her zaman **relative** olmalı: `/api/public/sites/atakentEczadeposu/blog`
 
 ### 3. Kontrol (yerel)
 
 Admin backend çalışıyorken tarayıcıda aç:
 
-- Blog: http://127.0.0.1:3001/api/public/sites/atakentEczadeposu/blog
-- Ürünler: http://127.0.0.1:3001/api/public/sites/atakentEczadeposu/products
+- Blog: `/api/public/sites/atakentEczadeposu/blog`
+- Ürünler: `/api/public/sites/atakentEczadeposu/products`
 
 JSON dönüyorsa backend çalışıyordur; sorun diğer sitedeki URL’in yanlış (relative) kullanılmasıdır.
 
 ---
 
-**Özet:** 404’ü çözmek için diğer sitede `VITE_API_BASE` tanımla ve fetch’te **mutlaka** `${VITE_API_BASE}/api/public/sites/${SITE_ID}/blog` gibi **tam URL** kullan; relative path (`/api/public/...`) kullanma.
+**Özet:** 404’ü çözmek için diğer sitede `VITE_API_BASE_URL=/api` kullan ve fetch’te **relative** endpoint çağır: `\`${API_BASE_URL}/public/sites/${SITE_ID}/blog\`` (veya direkt `'/api/public/...'`). Tam URL/port kullanma.

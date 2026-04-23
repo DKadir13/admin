@@ -1,25 +1,25 @@
 import { useState } from 'react'
-import { API_BASE } from '../api/client'
+import { API_BASE_URL } from '../api/client'
 
-const REACT_CODE = (apiBase, siteId) => `// Bu sitedeki blog ve ürün verilerini React ile çekmek için
+const REACT_CODE = (apiBaseUrl, siteId) => `// Bu sitedeki blog ve ürün verilerini React ile çekmek için
 
-const API_BASE = '${apiBase}'
+const API_BASE_URL = '${apiBaseUrl}'
 const SITE_ID = '${siteId}'
 
 async function getBlogPosts() {
-  const res = await fetch(\`\${API_BASE}/api/public/sites/\${SITE_ID}/blog\`)
+  const res = await fetch(\`\${API_BASE_URL}/public/sites/\${SITE_ID}/blog\`)
   if (!res.ok) throw new Error('Blog yüklenemedi')
   return res.json()
 }
 
 async function getProducts() {
-  const res = await fetch(\`\${API_BASE}/api/public/sites/\${SITE_ID}/products\`)
+  const res = await fetch(\`\${API_BASE_URL}/public/sites/\${SITE_ID}/products\`)
   if (!res.ok) throw new Error('Ürünler yüklenemedi')
   return res.json()
 }
 
 async function getEvents() {
-  const res = await fetch(\`\${API_BASE}/api/public/sites/\${SITE_ID}/events\`)
+  const res = await fetch(\`\${API_BASE_URL}/public/sites/\${SITE_ID}/events\`)
   if (!res.ok) throw new Error('Etkinlikler yüklenemedi')
   return res.json()
 }
@@ -77,7 +77,7 @@ function ProductList() {
 
 export default function DataFetchCodeBlock({ siteId }) {
   const [copied, setCopied] = useState(false)
-  const code = REACT_CODE(API_BASE, siteId || 'SITE_ID')
+  const code = REACT_CODE(API_BASE_URL, siteId || 'SITE_ID')
 
   const handleCopy = async () => {
     try {
@@ -94,7 +94,7 @@ export default function DataFetchCodeBlock({ siteId }) {
       <div className="data-fetch-code-header">
         <h3>Sitenizde bu verileri React ile nasıl çekersiniz?</h3>
         <p className="data-fetch-code-desc">
-          Bu panelde eklediğiniz ürün ve blog verileri diğer sitenizden token olmadan çekilebilir. Aşağıdaki kodu kendi React projenize kopyalayıp <strong>API_BASE</strong> ve <strong>SITE_ID</strong> değerlerini kullanın.
+          Bu panelde eklediğiniz ürün ve blog verileri diğer sitenizden token olmadan çekilebilir. Aşağıdaki kodu kendi React projenize kopyalayıp <strong>API_BASE_URL</strong> ve <strong>SITE_ID</strong> değerlerini kullanın.
         </p>
         <button type="button" className="btn-copy-code" onClick={handleCopy}>
           {copied ? 'Kopyalandı!' : 'Kodu kopyala'}
@@ -106,17 +106,17 @@ export default function DataFetchCodeBlock({ siteId }) {
       <div className="data-fetch-code-endpoints">
         <strong>Endpoint'ler:</strong>
         <ul>
-          <li><code>GET {API_BASE}/api/public/sites/{siteId}/blog</code> — Yayındaki blog yazıları</li>
-          <li><code>GET {API_BASE}/api/public/sites/{siteId}/products</code> — Bu sitede eklediğiniz aktif ürünler (resimler tam URL ile döner)</li>
-          <li><code>GET {API_BASE}/api/public/sites/{siteId}/events</code> — Aktif etkinlikler (tarih, yer, görsel tam URL)</li>
-          <li><code>GET {API_BASE}/api/public/sites/{siteId}/blog/:slug</code> — Belirli bir blog yazısı</li>
-          <li><code>GET {API_BASE}/api/public/sites/{siteId}/blog?search=keyword</code> — Blog yazılarında arama</li>
-          <li><code>GET {API_BASE}/api/public/sites/{siteId}/products?search=keyword</code> — Ürünlerde arama</li>
-          <li><code>GET {API_BASE}/api/public/sites/{siteId}/products?category=catId</code> — Kategoriye göre ürünler</li>
-          <li><code>GET {API_BASE}/api/public/sites/{siteId}/products?tag=tagId</code> — Etikete göre ürünler</li>
-          <li><code>GET {API_BASE}/api/public/sites/{siteId}/blog?category=catId</code> — Kategoriye göre blog yazıları</li>
-          <li><code>GET {API_BASE}/api/public/sites/{siteId}/blog?tag=tagId</code> — Etikete göre blog yazıları</li>
-          <li><code>GET {API_BASE}/api/public/sites/{siteId}/blog?author=authorId</code> — Yazara göre blog yazıları</li>
+          <li><code>GET {API_BASE_URL}/public/sites/{siteId}/blog</code> — Yayındaki blog yazıları</li>
+          <li><code>GET {API_BASE_URL}/public/sites/{siteId}/products</code> — Bu sitede eklediğiniz aktif ürünler (resimler tam URL ile döner)</li>
+          <li><code>GET {API_BASE_URL}/public/sites/{siteId}/events</code> — Aktif etkinlikler (tarih, yer, görsel tam URL)</li>
+          <li><code>GET {API_BASE_URL}/public/sites/{siteId}/blog/:slug</code> — Belirli bir blog yazısı</li>
+          <li><code>GET {API_BASE_URL}/public/sites/{siteId}/blog?search=keyword</code> — Blog yazılarında arama</li>
+          <li><code>GET {API_BASE_URL}/public/sites/{siteId}/products?search=keyword</code> — Ürünlerde arama</li>
+          <li><code>GET {API_BASE_URL}/public/sites/{siteId}/products?category=catId</code> — Kategoriye göre ürünler</li>
+          <li><code>GET {API_BASE_URL}/public/sites/{siteId}/products?tag=tagId</code> — Etikete göre ürünler</li>
+          <li><code>GET {API_BASE_URL}/public/sites/{siteId}/blog?category=catId</code> — Kategoriye göre blog yazıları</li>
+          <li><code>GET {API_BASE_URL}/public/sites/{siteId}/blog?tag=tagId</code> — Etikete göre blog yazıları</li>
+          <li><code>GET {API_BASE_URL}/public/sites/{siteId}/blog?author=authorId</code> — Yazara göre blog yazıları</li>
           
         </ul>
       </div>

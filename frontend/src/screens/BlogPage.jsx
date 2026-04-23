@@ -1,9 +1,13 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { API_BASE, getBlog, createBlogPost, updateBlogPost, deleteBlogPost, uploadImage } from '../api/client'
+import { getBlog, createBlogPost, updateBlogPost, deleteBlogPost, uploadImage } from '../api/client'
 import { useToast } from '../context/ToastContext'
 
-const imageSrc = (path) => (!path ? '' : path.startsWith('http') ? path : `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`)
+const imageSrc = (path) => {
+  if (!path) return ''
+  if (String(path).startsWith('http')) return path
+  return String(path).startsWith('/') ? String(path) : `/${path}`
+}
 
 const KEEP_DAYS_OPTIONS = [
   { value: 7, label: '7 gün' },

@@ -53,8 +53,8 @@ Bu doküman, bu repodaki admin panelini bir Linux sunucuda çalıştırmak için
 - **`frontend/src/api/client.js`**
   - Tüm API istekleri burada toplanır.
   - **`API_BASE`** tek yerden çözülür:
-    - Öncelik: `import.meta.env.VITE_API_BASE`
-    - Env yoksa: **aynı origin** kullanır (örn. `http://85.235.74.60`)
+    - Öncelik: `import.meta.env.VITE_API_BASE_URL`
+    - Varsayılan: **`/api`** (Nginx `location /api` → backend’e proxy)
   - Bu sayede API çağrıları Nginx üzerinden `/api/*` ile akar.
 
 - **`frontend/src/screens/*`**
@@ -62,7 +62,7 @@ Bu doküman, bu repodaki admin panelini bir Linux sunucuda çalıştırmak için
 
 - **`frontend/.env.example`**
   - Frontend’in backend’e bağlanacağı adres örneği:
-    - `VITE_API_BASE=http://85.235.74.60`
+    - `VITE_API_BASE_URL=/api`
 
 ## Ortam değişkenleri (ENV)
 
@@ -85,7 +85,7 @@ Notlar:
 - Vite env:
 
 ```env
-VITE_API_BASE=http://85.235.74.60
+VITE_API_BASE_URL=/api
 ```
 
 ## Sunucuda kurulum (PM2 ile)
@@ -143,7 +143,7 @@ pm2 save
 Sağlık kontrolü:
 
 ```bash
-curl -i http://127.0.0.1:3001/api/health
+curl -i http://<NGINX_ORIGIN>/api/health
 ```
 
 ### 4) Frontend build (sunucuda statik dosya üretmek istersen)
@@ -167,7 +167,7 @@ Eğer domain üzerinden `/api`’yi 3001’e yönlendirmek istiyorsan tipik yakl
 
 ```nginx
 location /api/ {
-  proxy_pass http://127.0.0.1:3001;
+  proxy_pass http://<BACKEND_HOST>:<BACKEND_PORT>;
   proxy_set_header Host $host;
   proxy_set_header X-Real-IP $remote_addr;
   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -197,13 +197,13 @@ GitHub’da repo → **Settings → Secrets and variables → Actions**:
 - Önce backend ayakta mı kontrol et:
 
 ```bash
-curl -i http://127.0.0.1:3001/api/health
+curl -i http://<NGINX_ORIGIN>/api/health
 pm2 status
 pm2 logs admin-backend --lines 200
 ```
 
 ### 2) Frontend “Request URL” localhost görünüyor
 - Frontend env’i doğru set et:
-  - `VITE_API_BASE=http://85.235.74.60`
+  - `VITE_API_BASE_URL=/api`
 - Eğer env yoksa, frontend zaten **aynı origin**’i kullanır (Nginx `/api` proxy gerekir).
 

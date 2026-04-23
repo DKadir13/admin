@@ -14,7 +14,7 @@
 
 ## Yerel kullanım: Eklediğin blog/ürün diğer sitede görünsün
 
-Her şeyi kendi bilgisayarında çalıştırıyorsan ve diğer site (örn. atakenteczadeposu) aynı veriyi gösterecekse → **LOCAL_KULLANIM.md** dosyasına bak. Özet: backend’i çalıştır, diğer sitede `VITE_API_BASE=http://127.0.0.1:3001` kullan, fetch’te tam URL at.
+Her şeyi kendi bilgisayarında çalıştırıyorsan ve diğer site aynı veriyi gösterecekse → **LOCAL_KULLANIM.md** dosyasına bak. Özet: backend’i çalıştır, diğer sitede `VITE_API_BASE_URL=/api` kullan, fetch/axios isteklerini relative `'/api/...'` üzerinden gönder.
 
 ## Çalıştırma
 
@@ -24,7 +24,7 @@ Her şeyi kendi bilgisayarında çalıştırıyorsan ve diğer site (örn. atake
    npm install
    npm run dev
    ```
-   Varsayılan: http://127.0.0.1:3001  
+   Varsayılan: (Nginx/proxy ile) `/api`  
    Veritabanı: `MONGODB_URI` (varsayılan: `mongodb://localhost:27017/admin-panel`). İlk çalıştırmada 6 site otomatik seedlenir.
 
 2. **Frontend**:

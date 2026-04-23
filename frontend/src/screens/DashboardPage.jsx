@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { API_BASE, getBlog, getProducts } from '../api/client'
+import { getBlog, getProducts } from '../api/client'
 
-const imageSrc = (path) => (!path ? '' : path.startsWith('http') ? path : `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`)
+const imageSrc = (path) => {
+  if (!path) return ''
+  if (String(path).startsWith('http')) return path
+  return String(path).startsWith('/') ? String(path) : `/${path}`
+}
 
 export default function DashboardPage() {
   const { siteId } = useParams()

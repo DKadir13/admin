@@ -10,9 +10,9 @@ Bu projede **blog yazıları** ve **ürünler** verisini harici bir API'den çek
 
 ### API bilgileri
 - **Base URL (zorunlu):** Mutlaka **tam adres** kullan. Relative path (`/api/public/...`) kullanma, 404 alırsın.
-  - **Yerel:** `http://127.0.0.1:3001` — admin backend aynı bilgisayarda çalışıyor olmalı.
-  - **Canlı (sunucu):** `http://85.235.74.60` — Nginx `/api` isteklerini 3001’e yönlendirmeli.
-- **.env:** Örn `VITE_API_BASE=http://85.235.74.60` ve `VITE_SITE_ID=atakentEczadeposu` (veya ilgili site id) tanımla.
+  - **Yerel:** Nginx (veya dev proxy) `/api` isteklerini yerelde çalışan backend’e yönlendirmeli.
+  - **Canlı (sunucu):** Nginx `/api` isteklerini backend’e (örn. 3001) yönlendirmeli.
+- **.env:** `VITE_API_BASE_URL=/api` ve `VITE_SITE_ID=<admin-paneldeki-site-id>` (ilgili site id) tanımla.
 - **Kimlik doğrulama:** Yok. Public endpoint'ler token istemez.
 - **Site ID:** Örnekler: `medicaGlobal`, `akyPharma`, `arthroline`, `medart`, `renova`, `atakentEczadeposu`
 
@@ -31,12 +31,12 @@ Bu projede **blog yazıları** ve **ürünler** verisini harici bir API'den çek
 ### Yapılmasını istediğim
 1. **Blog sayfası / bölümü:** Bu API'den ilgili `siteId` ile blog listesini çek, listele. İstersen slug ile tekil yazı sayfası da olsun (liste içinden slug ile filtreleyebilirsin).
 2. **Ürünler sayfası / bölümü:** Aynı şekilde ürün listesini bu API'den çek, listele. Resim, ad, fiyat, açıklama alanlarını kullan.
-3. API base URL ve siteId'yi ortam değişkeni veya config dosyasından okunabilir yap (örn. `VITE_API_BASE`, `VITE_SITE_ID` veya .env).
+3. API base URL ve siteId'yi ortam değişkeni veya config dosyasından okunabilir yap (örn. `VITE_API_BASE_URL`, `VITE_SITE_ID` veya .env).
 
 ### Örnek kullanım (referans) — URL mutlaka tam (absolute) olsun
 ```javascript
-// Örn: VITE_API_BASE=http://85.235.74.60 (.env). Nginx /api proxy çalışıyor olmalı.
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://85.235.74.60'
+// Örn: VITE_API_BASE_URL=/api (.env). Nginx /api proxy çalışıyor olmalı.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
 const SITE_ID = import.meta.env.VITE_SITE_ID || 'atakentEczadeposu'
 
 // Yanlış: fetch('/api/public/...') → 404 verir (istek kendi siteden gider)
